@@ -5,6 +5,8 @@ colorFrom: blue
 colorTo: green
 sdk: docker
 pinned: false
+license: mit
+short_description: A solara web app template for MapLibre
 app_port: 7860
 ---
 
