@@ -2,7 +2,7 @@
 FROM python:3.11-slim
 
 # 2. 設定工作目錄
-WORKDIR /pages._00_home.py
+WORKDIR /app
 
 # 3. 複製需求檔案
 COPY requirements.txt .
@@ -20,4 +20,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # 6. 告訴 HF 如何執行 (使用 7860 port)
-CMD ["solara", "run", "app.py", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["solara", "run", "pages/00_home.py", "--host", "0.0.0.0", "--port", "7860"]
