@@ -1,4 +1,6 @@
+
 import solara
+
 
 @solara.component
 def Page():
@@ -12,7 +14,5 @@ def Page():
 
         ![image](https://github.com/user-attachments/assets/efc9e43b-99c0-40b4-af08-4971e8b96919)
         """
-        solara.Markdown(markdown)
 
-        # 按鈕跳轉到 Global page
-        solara.Link(url="/01_globle")(lambda: solara.Button("Go to Global Page 🌍"))
+        solara.Markdown(markdown)

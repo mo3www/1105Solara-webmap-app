@@ -1,7 +1,9 @@
 import solara
 import leafmap.maplibregl as leafmap
 
+
 def create_map():
+
     m = leafmap.Map(
         style="liberty",
         projection="globe",
@@ -10,6 +12,7 @@ def create_map():
         sidebar_visible=True,
     )
     return m
+
 
 @solara.component
 def Page():
