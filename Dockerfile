@@ -2,7 +2,7 @@
 FROM python:3.11-slim
 
 # 2. 設定工作目錄
-WORKDIR /app
+WORKDIR /pages/00_home
 
 # 3. 複製需求檔案
 COPY requirements.txt .
