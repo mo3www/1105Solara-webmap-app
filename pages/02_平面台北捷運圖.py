@@ -10,6 +10,7 @@ def create_map():
         height="750px",
         zoom=2.5,
         sidebar_visible=True,
+        center=[25.0330, 121.5654],
     )
     points_url = "https://raw.githubusercontent.com/leoluyi/taipei_mrt/refs/heads/master/stations.geojson"
     lines_url = (
