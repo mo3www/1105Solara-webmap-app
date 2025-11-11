@@ -16,7 +16,7 @@ def create_map():
 
     return m
 
-@solara.compoment
+@solara.component
 def Page():
     m.create_map()
     return m.to_solara()
