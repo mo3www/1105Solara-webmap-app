@@ -1,9 +1,8 @@
 import solara
 import leafmap.maplibregl as leafmap
 import requests
-import json
 
-
+# 路線顏色對應表
 def route_color(route_name):
     """ 根據路線名稱返回顏色 """
     if '信義線' in route_name or '淡水線' in route_name:
@@ -19,8 +18,7 @@ def route_color(route_name):
     elif '碧潭支線' in route_name:
         return '#d0e300'  # 明綠色
     else:
-        return '#cccccc'  # 預設顏色
-
+        return '#cccccc'  # 預設灰色
 
 def create_map():
     m = leafmap.Map(
@@ -32,29 +30,59 @@ def create_map():
         center=[25.0330, 121.5654],  # 台北市中心
     )
 
-    # 讀取路線資料
+    # 讀取捷運路線
     lines_url = "https://raw.githubusercontent.com/leoluyi/taipei_mrt/refs/heads/master/routes.geojson"
     lines_data = requests.get(lines_url).json()
+    # 在每個 feature 裡加入 color 屬性
+    for feature in lines_data["features"]:
+        route_name = feature["properties"].get("RouteName", "")
+        feature["properties"]["color"] = route_color(route_name)
 
-    # line_style 函數
-    def line_style(feature):
-        return {
-            "color": route_color(feature["properties"].get("RouteName", "")),
-            "width": 3,
-            "opacity": 0.8,
-        }
+    # 加入路線圖層
+    m.add_geojson(
+        lines_data,
+        name="Lines",
+        style={"color": "color", "width": 3, "opacity": 0.8}  # 使用 properties 裡的 color
+    )
 
-    m.add_geojson(lines_data, name="Lines", line_style=line_style)
-
-    # 讀取站點資料
+    # 讀取捷運站
     stations_url = "https://raw.githubusercontent.com/leoluyi/taipei_mrt/refs/heads/master/stations.geojson"
     stations_data = requests.get(stations_url).json()
 
-    # 點資料樣式
-    m.add_geojson(stations_data, name="Stations", point_style={"radius": 4, "color": "white", "fillColor": "#666666"})
+    # 加入站點
+    m.add_geojson(
+        stations_data,
+        name="Stations",
+        point_style={
+            "radius": 4,
+            "color": "#666666",
+            "fillColor": "white",
+            "fillOpacity": 1,
+            "weight": 2,
+            "opacity": 1,
+        },
+    )
+
+    # 如果有出口資料
+    exits_url = "https://raw.githubusercontent.com/leoluyi/taipei_mrt/refs/heads/master/exits.geojson"
+    try:
+        exits_data = requests.get(exits_url).json()
+        m.add_geojson(
+            exits_data,
+            name="Exits",
+            point_style={
+                "radius": 3,
+                "color": "#666666",
+                "fillColor": "yellow",
+                "fillOpacity": 1,
+                "weight": 1,
+                "opacity": 1,
+            },
+        )
+    except Exception:
+        print("沒有找到出口資料，跳過")
 
     return m
-
 
 @solara.component
 def Page():
