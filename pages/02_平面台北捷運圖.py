@@ -6,35 +6,20 @@ def create_map():
 
     m = leafmap.Map(
         style="dark-matter",
-        projection="globe",
+        projection="mercator",
         height="750px",
-        center=[121.5654, 25.0330],
-        zoom=4,
+        center=[121.5654, 25.0330],  # [lng, lat]
+        zoom=13,
         sidebar_visible=True,
     )
 
-    # building_pmtiles = "https://overturemaps-tiles-us-west-2-beta.s3.amazonaws.com/2025-04-23/buildings.pmtiles"
-    road_pmtiles = "https://github.com/leoluyi/taipei_mrt/blob/master/routes.geojson"
-    # building_style = {
-    #     "layers": [
-    #         {
-    #             "id": "Buildings",
-    #             "source": "buildings",
-    #             "source-layer": "building",
-    #             "type": "line",
-    #             "paint": {
-    #                 "line-color": "#ff0000",
-    #                 "line-width": 1,
-    #             },
-    #         },
-    #     ]
-    # }
+    # 使用 raw.githubusercontent.com 的 GeoJSON 連結（不是 blob）
+    road_geojson = "https://raw.githubusercontent.com/leoluyi/taipei_mrt/master/routes.geojson"
+
     road_style = {
         "layers": [
             {
                 "id": "Roads",
-                "source": "transportation",
-                "source-layer": "segment",
                 "type": "line",
                 "paint": {
                     "line-color": "#ffffff",
@@ -43,10 +28,9 @@ def create_map():
             },
         ]
     }
-    # m.add_pmtiles(
-    #     building_pmtiles, style=building_style, tooltip=True, fit_bounds=False
-    # )
-    m.add_pmtiles(road_pmtiles, style=road_style, tooltip=True, fit_bounds=False)
+
+    # 對 GeoJSON 使用 add_geojson（不是 add_pmtiles）
+    m.add_geojson(road_geojson, layer_name="Taipei MRT", style=road_style, tooltip=True, fit_bounds=False)
     return m
 
 
