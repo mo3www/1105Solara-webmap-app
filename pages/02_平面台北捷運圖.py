@@ -6,7 +6,7 @@ def create_map():
 
     m = leafmap.Map(
         style="dark-matter",
-        projection="vector",
+        projection="mercator",
         height="750px",
         zoom=2.5,
         sidebar_visible=True,
