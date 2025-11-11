@@ -25,42 +25,33 @@ def route_color(route_name):
 def create_map():
     m = leafmap.Map(
         style="dark-matter",
-        projection="mercator",  # 使用平面投影
+        projection="mercator",  # 平面投影
         height="750px",
-        zoom=12,  # 設定適合台北市區的縮放級別
+        zoom=12,
         sidebar_visible=True,
-        pitch=0,  # 取消傾斜角度
-        bearing=0,  # 取消旋轉角度
-        center=[25.0330, 121.5654],  # 置中於台北市
+        center=[25.0330, 121.5654],  # 台北市中心
     )
 
-    # 讀取捷運路線資料
+    # 讀取路線資料
     lines_url = "https://raw.githubusercontent.com/leoluyi/taipei_mrt/refs/heads/master/routes.geojson"
     lines_data = requests.get(lines_url).json()
 
-    # 為每條路線設定顏色
-    for feature in lines_data['features']:
-        line_name = feature['properties'].get('RouteName', '')
-        color = route_color(line_name)  # 根據路線名稱決定顏色
-        feature['properties']['color'] = color  # 更新顏色
-
-    # 添加路線資料
-    m.add_geojson(
-        lines_data,
-        name="Lines",
-        style={
-            'color': 'color',  # 使用 'color' 屬性來設置顏色
-            'weight': 3,  # 線條粗細
-            'opacity': 0.7  # 透明度
+    # line_style 函數
+    def line_style(feature):
+        return {
+            "color": route_color(feature["properties"].get("RouteName", "")),
+            "width": 3,
+            "opacity": 0.8,
         }
-    )
 
-    # 讀取捷運站點資料
+    m.add_geojson(lines_data, name="Lines", line_style=line_style)
+
+    # 讀取站點資料
     stations_url = "https://raw.githubusercontent.com/leoluyi/taipei_mrt/refs/heads/master/stations.geojson"
     stations_data = requests.get(stations_url).json()
 
-    # 添加站點資料
-    m.add_geojson(stations_data, name="Stations", fit_bounds=True)
+    # 點資料樣式
+    m.add_geojson(stations_data, name="Stations", point_style={"radius": 4, "color": "white", "fillColor": "#666666"})
 
     return m
 
