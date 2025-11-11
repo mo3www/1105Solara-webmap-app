@@ -1,9 +1,28 @@
 import solara
 import leafmap.maplibregl as leafmap
+import requests
+import json
+
+
+def route_color(route_name):
+    """ 根據路線名稱返回顏色 """
+    if '信義線' in route_name or '淡水線' in route_name:
+        return "#f9000f"  # 紅色
+    elif '木柵線' in route_name or '內湖線' in route_name:
+        return "#ce8d13"  # 橙色
+    elif '蘆洲線' in route_name or '新莊線' in route_name or '中和線' in route_name:
+        return '#ffb600'  # 黃色
+    elif '板橋線' in route_name or '南港線' in route_name:
+        return '#006bc2'  # 藍色
+    elif '小南門線' in route_name or '松山線' in route_name or '新店線' in route_name:
+        return '#008c5a'  # 綠色
+    elif '碧潭支線' in route_name:
+        return '#d0e300'  # 明綠色
+    else:
+        return '#cccccc'  # 預設顏色
 
 
 def create_map():
-
     m = leafmap.Map(
         style="dark-matter",
         projection="mercator",  # 使用平面投影
@@ -15,51 +34,35 @@ def create_map():
         center=[25.0330, 121.5654],  # 置中於台北市
     )
 
-    # 設定捷運路線和站點的 GeoJSON 來源
-    points_url = "https://raw.githubusercontent.com/leoluyi/taipei_mrt/refs/heads/master/stations.geojson"
+    # 讀取捷運路線資料
     lines_url = "https://raw.githubusercontent.com/leoluyi/taipei_mrt/refs/heads/master/routes.geojson"
-    
-    # 添加捷運站點 (Points)
-    m.add_geojson(points_url, name="Points", fit_bounds=False)
-    
-    # 這裡可以為每條線路設置不同顏色
+    lines_data = requests.get(lines_url).json()
+
+    # 為每條路線設定顏色
+    for feature in lines_data['features']:
+        line_name = feature['properties'].get('RouteName', '')
+        color = route_color(line_name)  # 根據路線名稱決定顏色
+        feature['properties']['color'] = color  # 更新顏色
+
+    # 添加路線資料
     m.add_geojson(
-        lines_url,
+        lines_data,
         name="Lines",
-        style=lambda feature: {
-            'color': get_line_color(feature),  # 使用不同顏色來區分每條線路
+        style={
+            'color': 'color',  # 使用 'color' 屬性來設置顏色
             'weight': 3,  # 線條粗細
             'opacity': 0.7  # 透明度
         }
     )
-    
+
+    # 讀取捷運站點資料
+    stations_url = "https://raw.githubusercontent.com/leoluyi/taipei_mrt/refs/heads/master/stations.geojson"
+    stations_data = requests.get(stations_url).json()
+
+    # 添加站點資料
+    m.add_geojson(stations_data, name="Stations", fit_bounds=True)
+
     return m
-
-
-def get_line_color(feature):
-    """
-    根據線路的名稱或者其他屬性返回不同的顏色
-    假設 GeoJSON 中有一個屬性叫做 "line_name" 用來標識不同的線路
-    """
-
-    line_name = feature['properties'].get('line_name', '').lower()  # 根據線路名稱返回顏色
-    
-    # 可以根據不同的線路名稱設置不同的顏色
-    line_colors = {
-        'blue': '#0099FF',  # 藍線
-        'red': '#FF3333',   # 紅線
-        'green': '#33CC33',  # 綠線
-        'brown': '#8B4513',  # 茶色
-        'orange': '#FFA500',  # 橙線
-        'yellow': '#FFFF00',  # 黃線
-    }
-    
-    # 若線路名稱在字典中，返回對應顏色
-    for line, color in line_colors.items():
-        if line in line_name:
-            return color
-    
-    return '#CCCCCC'  # 若找不到對應線路名稱，默認為灰色
 
 
 @solara.component
