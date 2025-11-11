@@ -7,3 +7,4 @@ maplibre
 rasterio
 rioxarray
 solara
+leafmap
