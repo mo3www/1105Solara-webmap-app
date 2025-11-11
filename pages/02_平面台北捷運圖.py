@@ -18,8 +18,8 @@ def create_map():
     # polygons_url = (
     #     "https://github.com/opengeos/datasets/releases/download/world/countries.geojson"
     # )
-    .add_geojson(points_url, name="Points", fit_bounds=False)
-     m.add_geojson(lines_url, name="Lines")
+    m.add_geojson(points_url, name="Points", fit_bounds=False)
+    m.add_geojson(lines_url, name="Lines")
     # m.add_geojson(polygons_url, name="Polygons")
 
     return m
