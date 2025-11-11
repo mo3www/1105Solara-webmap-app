@@ -6,31 +6,22 @@ def create_map():
 
     m = leafmap.Map(
         style="dark-matter",
-        projection="mercator",
+        projection="globe",
         height="750px",
-        center=[121.5654, 25.0330],  # [lng, lat]
-        zoom=13,
+        zoom=2.5,
         sidebar_visible=True,
     )
+    points_url = "https://github.com/leoluyi/taipei_mrt/blob/master/stations.geojson"
+     lines_url = (
+         "https://github.com/leoluyi/taipei_mrt/blob/master/routes.geojson"
+     )
+    # polygons_url = (
+    #     "https://github.com/opengeos/datasets/releases/download/world/countries.geojson"
+    # )
+    .add_geojson(points_url, name="Points", fit_bounds=False)
+     m.add_geojson(lines_url, name="Lines")
+    # m.add_geojson(polygons_url, name="Polygons")
 
-    # 使用 raw.githubusercontent.com 的 GeoJSON 連結（不是 blob）
-    road_geojson = "https://raw.githubusercontent.com/leoluyi/taipei_mrt/master/routes.geojson"
-
-    road_style = {
-        "layers": [
-            {
-                "id": "Roads",
-                "type": "line",
-                "paint": {
-                    "line-color": "#ffffff",
-                    "line-width": 2,
-                },
-            },
-        ]
-    }
-
-    # 對 GeoJSON 使用 add_geojson（不是 add_pmtiles）
-    m.add_geojson(road_geojson, layer_name="Taipei MRT", style=road_style, tooltip=True, fit_bounds=False)
     return m
 
 
