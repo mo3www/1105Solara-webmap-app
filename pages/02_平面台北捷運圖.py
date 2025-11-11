@@ -11,9 +11,9 @@ def create_map():
         zoom=2.5,
         sidebar_visible=True,
     )
-    points_url = "https://raw.github.com/leoluyi/taipei_mrt/blob/master/stations.geojson"
+    points_url = "https://raw.githubusercontent.com/leoluyi/taipei_mrt/refs/heads/master/stations.geojson"
     lines_url = (
-         "https://raw.github.com/leoluyi/taipei_mrt/blob/master/routes.geojson"
+         "https://raw.githubusercontent.com/leoluyi/taipei_mrt/refs/heads/master/routes.geojson"
      )
     # polygons_url = (
     #     "https://github.com/opengeos/datasets/releases/download/world/countries.geojson"
