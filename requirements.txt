@@ -6,3 +6,4 @@ mapclassify
 maplibre
 rasterio
 rioxarray
+solara
